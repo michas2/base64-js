@@ -30,3 +30,14 @@ class Base64Transformer {
     }
   }
 }
+
+function save(url, file){
+  const fileStream = streamSaver.createWriteStream(file)
+
+  fetch(url)
+  .then(res => res.body)
+  .then(stream => stream.pipeThrough(new DecompressionStream('gzip')))
+  .then(stream => stream.pipeThrough(new TransformStream(new Base64Transformer())))
+  .then(stream => stream.pipeTo(fileStream))
+  .then(() => console.log('done writing'))
+}
