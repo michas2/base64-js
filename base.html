@@ -18,9 +18,7 @@
         fetch(url)
 	.then(res => res.body)
 	.then(stream => stream.pipeThrough(new DecompressionStream('gzip')))
-	.then(stream => stream.pipeThrough(new TextDecoderStream()))
 	.then(stream => stream.pipeThrough(new TransformStream(new Base64Transformer())))
-	.then(stream => stream.pipeThrough(new TextEncoderStream()))
 	.then(stream => stream.pipeTo(fileStream))
         .then(() => console.log('done writing'))
       }

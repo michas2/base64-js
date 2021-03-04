@@ -4,8 +4,15 @@ class Base64Transformer {
   }
 
   transform(chunk, controller) {
+    function toBinary(chunk) {
+      const codeUnits = new Uint8Array(chunk.length);
+      for (let i = 0; i < chunk.length; i++) {
+        codeUnits[i] = chunk.charCodeAt(i);
+      }
+      return codeUnits;
+    }
     console.log("transform");
-    console.log(chunk);
+    chunk = (new TextDecoder()).decode(chunk)
     chunk = this.extra + chunk.replace(/(\r\n|\n|\r)/gm, '');
 
     // 4 characters represent 3 bytes, so we can only decode in groups of 4 chars
@@ -14,8 +21,7 @@ class Base64Transformer {
     // Store the extra chars for later
     this.extra = chunk.slice(chunk.length - remaining);
     chunk = chunk.slice(0, chunk.length - remaining);
-    //console.log("atob: '%o'",chunk);
-    controller.enqueue(atob(chunk));
+    controller.enqueue(toBinary(atob(chunk)));
   }
 
   flush(controller) {
